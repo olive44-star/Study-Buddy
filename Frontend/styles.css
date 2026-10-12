@@ -1,0 +1,93 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: #f3f4f8;
+  color: #24243a;
+  font-family: Arial, sans-serif;
+}
+
+.chat {
+  width: min(100%, 600px);
+  padding: 28px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px #25254a18;
+}
+
+h1 {
+  margin: 0 0 8px;
+}
+
+.intro {
+  margin-top: 0;
+  color: #666;
+}
+
+.messages {
+  min-height: 220px;
+  max-height: 50vh;
+  overflow-y: auto;
+  margin: 24px 0;
+  padding: 16px;
+  background: #f8f8fb;
+  border-radius: 12px;
+}
+
+.message {
+  width: fit-content;
+  max-width: 85%;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  line-height: 1.5;
+}
+
+.assistant {
+  background: #e9e7ff;
+}
+
+.user {
+  margin-left: auto;
+  background: #dff5e9;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.input-row {
+  display: flex;
+  gap: 8px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+}
+
+button {
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #6558d3;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5145bd;
+}
