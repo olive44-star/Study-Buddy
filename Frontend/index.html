@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StudyBuddy</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="chat">
+    <h1>StudyBuddy</h1>
+    <p class="intro">Ask a question and learn something new.</p>
+
+    <section id="messages" class="messages" aria-live="polite">
+      <p class="message assistant">Hi! What would you like to learn about?</p>
+    </section>
+
+    <form id="chat-form">
+      <label for="question">Your question</label>
+      <div class="input-row">
+        <input
+          id="question"
+          name="question"
+          type="text"
+          placeholder="For example: How do fractions work?"
+          required
+        >
+        <button type="submit">Send</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
