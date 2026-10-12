@@ -4,11 +4,22 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from groq import Groq
+from fastapi.middleware.cors
+import CORSMiddleware
 
 load_dotenv()
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "null",
+    ],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 SYSTEM_PROMPT = """
 You are a friendly educational tutor.
 Explain ideas clearly and step by step when useful.
@@ -40,7 +51,7 @@ def chat(request: ChatRequest):
         client = Groq(api_key=api_key)
 
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": question},
