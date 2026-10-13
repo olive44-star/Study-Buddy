@@ -55,7 +55,7 @@ def chat(request: ChatRequest):
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": question},
             ],
-            temperature=0.4,
+            temperature=0.9,
 max_completion_tokens=500,
         )
 
