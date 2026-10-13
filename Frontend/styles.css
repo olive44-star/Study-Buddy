@@ -91,3 +91,53 @@ button {
 button:hover {
   background: #5145bd;
 }
+
+
+
+ /* styling the copy and edit button */
+
+
+.message {
+  position: relative;
+}
+
+.message-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.message:hover .message-actions,
+.message:focus-within .message-actions {
+  opacity: 1;
+}
+
+.message-actions button {
+  padding: 4px 8px;
+  background: transparent;
+  color: #666;
+  font-size: 12px;
+}
+
+.message-actions button:hover {
+  background: #eeeeF5;
+}
+
+.message-editor {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  margin-bottom: 8px;
+  padding: 10px;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  font: inherit;
+}
+
+@media (hover: none) {
+  .message-actions {
+    opacity: 1;
+  }
+}
