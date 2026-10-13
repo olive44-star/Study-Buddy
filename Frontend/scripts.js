@@ -2,6 +2,11 @@ const form = document.querySelector("#chat-form");
 const questionInput = document.querySelector("#question");
 const messages = document.querySelector("#messages");
 
+function renderMessage(element, markdown) {
+  element.dataset.markdown = markdown;
+  element.innerHTML = DOMPurify.sanitize(marked.parse(markdown));
+}
+
 form.addEventListener("submit", async function (event) {
   event.preventDefault();
 
@@ -63,9 +68,9 @@ function addMessage(text, sender) {
   const message = document.createElement("div");
   message.classList.add("message", sender);
 
-  const textElement = document.createElement("p");
-  textElement.classList.add("message-text");
-  textElement.textContent = text;
+  const textElement = document.createElement("div");
+textElement.classList.add("message-text");
+renderMessage(textElement, text);
 
   const actions = document.createElement("div");
   actions.classList.add("message-actions");
@@ -76,7 +81,7 @@ function addMessage(text, sender) {
 
   copyButton.addEventListener("click", async function () {
     try {
-      await navigator.clipboard.writeText(textElement.textContent);
+      await navigator.clipboard.writeText(textElement.innerText);
       copyButton.textContent = "Copied!";
 
       setTimeout(function () {
@@ -93,7 +98,7 @@ function addMessage(text, sender) {
 
   editButton.addEventListener("click", function () {
     const editor = document.createElement("textarea");
-    editor.value = textElement.textContent;
+    editor.value = textElement.dataset.markdown || textElement.innerText;
     editor.classList.add("message-editor");
 
     const saveButton = document.createElement("button");
