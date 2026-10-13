@@ -11,9 +11,26 @@ form.addEventListener("submit", async function (event) {
     return;
   }
 
-  addMessage(question, "user");
+  const questionMessage = addMessage(question, "user");
   questionInput.value = "";
   questionInput.focus();
+
+  await getAnswer(question, questionMessage);
+});
+
+async function getAnswer(question, questionMessage) {
+  // Reuse this question's existing answer when it is edited.
+  let answerMessage = questionMessage.replyMessage;
+
+  if (answerMessage) {
+    answerMessage.querySelector(".message-text").textContent = "Thinking…";
+  } else {
+    answerMessage = addMessage("Thinking…", "assistant");
+    questionMessage.replyMessage = answerMessage;
+  }
+
+  questionMessage.requestNumber = (questionMessage.requestNumber || 0) + 1;
+  const thisRequest = questionMessage.requestNumber;
 
   try {
     const response = await fetch("http://127.0.0.1:8000/api/chat", {
@@ -30,14 +47,17 @@ form.addEventListener("submit", async function (event) {
       throw new Error(data.detail || "Something went wrong.");
     }
 
-    addMessage(data.answer, "assistant");
+    // Ignore an older response if the same question was edited again.
+    if (thisRequest === questionMessage.requestNumber) {
+      answerMessage.querySelector(".message-text").textContent = data.answer;
+    }
   } catch (error) {
-    addMessage(
-      `Sorry, I couldn't get an answer: ${error.message}`,
-      "assistant"
-    );
+    if (thisRequest === questionMessage.requestNumber) {
+      answerMessage.querySelector(".message-text").textContent =
+        `Sorry, I couldn't get an answer: ${error.message}`;
+    }
   }
-});
+}
 
 function addMessage(text, sender) {
   const message = document.createElement("div");
@@ -84,15 +104,21 @@ function addMessage(text, sender) {
     cancelButton.type = "button";
     cancelButton.textContent = "Cancel";
 
-    saveButton.addEventListener("click", function () {
+    saveButton.addEventListener("click", async function () {
       const updatedText = editor.value.trim();
 
-      if (updatedText !== "") {
-        textElement.textContent = updatedText;
+      if (updatedText === "") {
+        return;
       }
 
+      textElement.textContent = updatedText;
       message.replaceChild(textElement, editor);
       actions.replaceChildren(copyButton, editButton);
+
+      // Editing a question asks the AI again and updates its answer.
+      if (sender === "user") {
+        await getAnswer(updatedText, message);
+      }
     });
 
     cancelButton.addEventListener("click", function () {
@@ -109,4 +135,6 @@ function addMessage(text, sender) {
   message.append(textElement, actions);
   messages.appendChild(message);
   messages.scrollTop = messages.scrollHeight;
+
+  return message;
 }
