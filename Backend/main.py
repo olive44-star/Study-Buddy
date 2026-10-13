@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from groq import Groq
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -28,7 +28,7 @@ Keep your answers focused on learning.
 
 
 class ChatRequest(BaseModel):
-    question: str
+    question: str = Field(min_length=1, max_length=1000)
 
 
 @app.post("/api/chat")
@@ -47,7 +47,7 @@ def chat(request: ChatRequest):
         )
 
     try:
-        client = Groq(api_key=api_key)
+        client = Groq(api_key=api_key, timeout=30.0)
 
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
@@ -55,6 +55,8 @@ def chat(request: ChatRequest):
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": question},
             ],
+            temperature=0.4,
+max_completion_tokens=500,
         )
 
         answer = response.choices[0].message.content
