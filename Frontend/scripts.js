@@ -54,7 +54,7 @@ async function getAnswer(question, questionMessage) {
 
     // Ignore an older response if the same question was edited again.
     if (thisRequest === questionMessage.requestNumber) {
-      answerMessage.querySelector(".message-text").textContent = data.answer;
+    renderMessage(answerMessage.querySelector(".message-text"), data.answer);      
     }
   } catch (error) {
     if (thisRequest === questionMessage.requestNumber) {
@@ -116,7 +116,7 @@ renderMessage(textElement, text);
         return;
       }
 
-      textElement.textContent = updatedText;
+    renderMessage(textElement, updatedText);
       message.replaceChild(textElement, editor);
       actions.replaceChildren(copyButton, editButton);
 
