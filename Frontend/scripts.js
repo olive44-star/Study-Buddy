@@ -2,6 +2,11 @@ const form = document.querySelector("#chat-form");
 const questionInput = document.querySelector("#question");
 const messages = document.querySelector("#messages");
 
+
+
+let ageRange = null;
+let questionWaitingForAge = null;
+let waitingForAgeRange = false;
 function renderMessage(element, markdown) {
   element.dataset.markdown = markdown;
   element.innerHTML = DOMPurify.sanitize(marked.parse(markdown));
@@ -10,17 +15,46 @@ function renderMessage(element, markdown) {
 form.addEventListener("submit", async function (event) {
   event.preventDefault();
 
-  const question = questionInput.value.trim();
+  const answer = questionInput.value.trim();
 
-  if (question === "") {
+  if (answer === "") {
     return;
   }
 
-  const questionMessage = addMessage(question, "user");
   questionInput.value = "";
   questionInput.focus();
 
-  await getAnswer(question, questionMessage);
+  // The user's next message supplies their age range.
+  if (waitingForAgeRange) {
+    ageRange = answer;
+    addMessage(answer, "user");
+    waitingForAgeRange = false;
+
+    const pending = questionWaitingForAge;
+    questionWaitingForAge = null;
+
+    await getAnswer(pending.question, pending.message);
+    return;
+  }
+
+  const questionMessage = addMessage(answer, "user");
+
+  // Ask once, after the first question in this chat session.
+  if (ageRange === null) {
+    questionWaitingForAge = {
+      question: answer,
+      message: questionMessage
+    };
+    waitingForAgeRange = true;
+
+    addMessage(
+      "Before I answer, what age range should I tailor this for? For example: 6–8, 9–11, 12–14, 15–17, or 18+.",
+      "assistant"
+    );
+    return;
+  }
+
+  await getAnswer(answer, questionMessage);
 });
 
 async function getAnswer(question, questionMessage) {
@@ -43,7 +77,10 @@ async function getAnswer(question, questionMessage) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ question: question })
+body: JSON.stringify({
+  question: question,
+  age_range: ageRange
+})
     });
 
     const data = await response.json();
